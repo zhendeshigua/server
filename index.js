@@ -19,10 +19,9 @@ app.use(route.get('/bd_zhuogui', baidu.zhuogui));
 app.use(route.get('/bd_zuobiao', baidu.zuobiao));
 app.use(route.get('/bd_findword',baidu.findword));
 
-
 app.use(route.get('/tc_zhuogui', tencent.zhuogui));
 app.use(route.get('/tc_zuobiao', tencent.zuobiao));
-app.use(route.get('/tc_findword',tencent.findword));
+app.use(route.get('/tc_wzwz',    tencent.wzwz));
 
 
 console.log("sever run at port 8888");

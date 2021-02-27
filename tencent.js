@@ -79,7 +79,41 @@ const zuobiao = async ctx =>{
 
 }
 
+const wzwz = async ctx =>{
+    let qs=ctx.request.querystring;
+    console.log(" The parameter is: "+qs);
+    if(!qs){
+        return ctx.body="WrongPara";
+    }
+    qs=qs.split('=')[1];
+    if(qs.indexOf('&')>-1 || qs.indexOf('=')>-1){
+        return ctx.body="WrongPara";
+    }    
+    let base64str = utils.img2base64('C:/'+qs+'.jpg');
+    let req ={
+        ImageBase64: base64str
+    }
+    const data = await client.GeneralAccurateOCR(req)
+    let res='';
+    const extract = e=>{
+        let text=e.DetectedText;
+        if(e.ItemPolygon){
+            let posx = e.ItemPolygon.X + parseInt(e.ItemPolygon.Width/2);
+            let posy = e.ItemPolygon.Y + parseInt(e.ItemPolygon.Height/2);
+            res+= text+'$'+posx+'$'+posy+'|';
+        }else{
+            res+= text+'$'+-1+'$'+-1+'|';
+        }        
+    }
+    data.TextDetections.map(extract);
+    if(res.endsWith('|')) res = res.slice(0,-1);
+    console.log("extract result is: ",res);
+    return ctx.body = res;
+}
+
+
 module.exports={
     zhuogui,
     zuobiao,
+    wzwz
 }
