@@ -3,9 +3,9 @@ const fs = require('fs');
 const images = require("images");
 const utils = require('./utils');
 const cfg = require('./config');
+const global = require('./global');
 
 var count=0;
-var ghost='';
 var Access_Token="";
 
 let get_token = ()=>{
@@ -128,7 +128,7 @@ let zhuogui = async ctx => {
     // console.log('%%%%%%%',concat_str);
     let tout = utils.recognize(tconcat_str, guess);
     result_list.push(tout)
-
+    global.ghost = utils.recGhost(tconcat_str);
     for(let i=0;i<loop;i=i+1){        
         path = `./outs/output${i}.jpg`
         let res = await intervalAccurateRec(path,350);  
@@ -268,5 +268,5 @@ module.exports={
     zhuogui,
     zuobiao,
     findword,
-    get_token
+    get_token,
 }

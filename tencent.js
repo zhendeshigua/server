@@ -1,7 +1,7 @@
 const tencentcloud = require("tencentcloud-sdk-nodejs");
 const cfg = require("./config");
 const utils = require('./utils');
-
+const global = require('./global');
 
 const client = new tencentcloud.ocr.v20181119.Client({
     credential: cfg.tc_credential[cfg.tc_credential_index],
@@ -37,7 +37,8 @@ const zhuogui = async ctx=>{
     // console.log('tencen rec data is:\n',data);
     let concat_str='';
     data.TextDetections.map(x=>concat_str=concat_str+x.DetectedText);
-    console.log(concat_str);    
+    console.log(concat_str); 
+    global.ghost = utils.recGhost(concat_str);   
     let rec = utils.recognize(concat_str, guess);
     ctx.body = rec.where + ','+rec.axis;
 }
@@ -95,19 +96,30 @@ const wzwz = async ctx =>{
     }
     const data = await client.GeneralAccurateOCR(req)
     let res='';
+    let ghost_arr=utils.parseGhost();
+
     const extract = e=>{
-        let text=e.DetectedText;
-        if(!text.endsWith('鬼')) return;
-        if(e.ItemPolygon){
-            let posx = e.ItemPolygon.X + parseInt(e.ItemPolygon.Width/2);
-            let posy = e.ItemPolygon.Y + parseInt(e.ItemPolygon.Height/2);
-            res+= text+'$'+posx+'$'+posy+'|';
-        }else{
-            res+= text+'$'+-1+'$'+-1+'|';
-        }        
+        let text=''+e.DetectedText;
+        let filter = ghost_arr.filter(x=>{
+            let a = text.indexOf(x[0]);
+            let b = text.indexOf(x[1]);
+            if(a<b && a>=0) return true;
+            return false;
+        });
+        if(filter.length>0){
+            // text = global.ghost;
+            if(e.ItemPolygon){
+                let posx = e.ItemPolygon.X + parseInt(e.ItemPolygon.Width/2);
+                let posy = e.ItemPolygon.Y + parseInt(e.ItemPolygon.Height/2);
+                res+= text+'$'+posx+'$'+posy+'|';
+            }else{
+                res+= text+'$'+-1+'$'+-1+'|';
+            }    
+        }            
     }
     data.TextDetections.map(extract);
     if(res.endsWith('|')) res = res.slice(0,-1);
+    res+='->' + global.ghost;
     console.log("extract result is: ",res);
     return ctx.body = res;
 }

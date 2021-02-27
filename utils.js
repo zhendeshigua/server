@@ -1,6 +1,6 @@
-const { group } = require('console');
 const fs = require('fs');
 const cfg = require('./config');
+const global = require('./global');
 
 const img2base64 = (path)=>{
     console.log('rec file path is: ',path);
@@ -77,8 +77,33 @@ const recognize = (concat_str, guess)=>{
     return {where: where, axis:axis} 
 } 
 
+const parseGhost=()=>{
+    let res=[]
+    for(let i=0;i<global.ghost.length;i++){
+        for(let j=i+1;j<global.ghost.length;j++){
+            res.push(global.ghost[i]+global.ghost[j]);
+        }
+    }
+    return res;
+}
+
+const recGhost = concat_str =>{
+    let pt = /\d[处抓]+.+[鬼。\.]$/
+    let res = concat_str.match(pt);    
+    res=''+res;
+    // console.log('first match: ',res);
+    res = res.replace(/\d[处抓]+/,'')
+    res = res.replace(/[。\.]/,'')
+    res = ''+res;
+    if(!res.endsWith('鬼')) res+='鬼'
+    console.log('the ghost is: ',res)
+    return res;
+}
+
 module.exports={
     img2base64,
     zhuoguiDict,
-    recognize
+    recognize,
+    parseGhost,
+    recGhost
 }
