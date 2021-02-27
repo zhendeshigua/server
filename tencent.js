@@ -97,6 +97,7 @@ const wzwz = async ctx =>{
     let res='';
     const extract = e=>{
         let text=e.DetectedText;
+        if(!text.endsWith('鬼')) return;
         if(e.ItemPolygon){
             let posx = e.ItemPolygon.X + parseInt(e.ItemPolygon.Width/2);
             let posy = e.ItemPolygon.Y + parseInt(e.ItemPolygon.Height/2);
