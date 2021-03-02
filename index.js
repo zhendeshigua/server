@@ -3,7 +3,7 @@ const route = require('koa-route');
 const charset = require('koa-charset');
 const baidu = require('./baidu')
 const tencent = require('./tencent');
-
+const mail = require('./mail');
 //pkg -t win index.js -o server.exe 
 const app = new Koa();
 app.use(charset());
@@ -22,6 +22,9 @@ app.use(route.get('/bd_findword',baidu.findword));
 app.use(route.get('/tc_zhuogui', tencent.zhuogui));
 app.use(route.get('/tc_zuobiao', tencent.zuobiao));
 app.use(route.get('/tc_wzwz',    tencent.wzwz));
+
+app.use(route.get('/sendmail', mail.sendMail));
+app.use(route.get('/waitanswer', mail.waitAnswer));
 
 
 console.log("sever run at port 8888");

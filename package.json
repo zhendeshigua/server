@@ -2,9 +2,11 @@
   "dependencies": {
     "iconv-lite": "^0.6.2",
     "images": "^3.2.3",
+    "imap": "^0.8.19",
     "koa": "2.13.0",
     "koa-charset": "^2.0.0",
     "koa-route": "^3.2.0",
+    "nodemailer": "^6.5.0",
     "request": "^2.88.2",
     "tencentcloud-sdk-nodejs": "^4.0.66"
   },

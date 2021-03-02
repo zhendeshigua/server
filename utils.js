@@ -15,6 +15,13 @@ const img2base64 = (path)=>{
 }
 
 
+let wait = async (millsec)=>{
+    return new Promise(function(resolve,reject){
+        setTimeout(function(){resolve(1);},millsec);
+    })
+}
+
+
 const zhuoguiDict = ()=>{
     let wheres = cfg.zhuogui_place;
 
@@ -105,5 +112,6 @@ module.exports={
     zhuoguiDict,
     recognize,
     parseGhost,
-    recGhost
+    recGhost,
+    wait
 }
