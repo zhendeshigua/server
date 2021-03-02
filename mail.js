@@ -18,9 +18,9 @@ let transporter = nodemailer.createTransport({
 
 
 var imap = new Imap({
-    user: 'mygmailname@gmail.com',
-    password: 'mygmailpassword',
-    host: 'imap.gmail.com',
+    user: cfg.mail_account,
+    password: cfg.mail_password,
+    host: 'imap.qq.com',
     port: 993,
     tls: true
 });
@@ -31,9 +31,9 @@ async function sendMail(ctx) {
     let content = utils.img2base64('C:/sixiaoren.jpg');
     // setup email data with unicode symbols
     let mailOptions = {
-        from: '"zhendeshigua" <jass.ada@qq.com>', // sender address
-        to: toaddress, // list of receivers
-        subject: "Help", // Subject line
+        from: `"真的是挂" <${cfg.mail_account}>`, // sender address
+        to: cfg.mail_sendto, // list of receivers
+        subject: "四小人", // Subject line
         //   text: ecode, // plain text body
         html: `<img src="data:image/jpeg;base64,${content}">`// html body
     };
@@ -116,3 +116,5 @@ module.exports = {
     sendMail,
     waitAnswer
 };
+
+sendMail({})
