@@ -3,7 +3,8 @@ const nodemailer = require("nodemailer");
 var Imap = require('imap');
 var inspect = require('util').inspect;
 const cfg = require("./config");
-const utils = require("./utils")
+const utils = require("./utils");
+const { isString } = require("util");
 
 // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
@@ -69,7 +70,9 @@ const handleMail = (err)=>{
             stream.once('end', function () {
                 //console.log(prefix + 'Parsed header: ', Imap.parseHeader(buffer));
                 let res = Imap.parseHeader(buffer);
+                if(!res && !res.from) return;
                 let from = res.from[0];
+                if(typeof from != 'string') return;
                 let time = new Date(res.date[0]);
                 let subject = res.subject[0];
                 let tg = Date.now() - time.getTime();
@@ -90,7 +93,8 @@ imap.once('ready', function () {
     imap.openBox('INBOX', true, handleMail);
 });
 
-imap.once('mail', function () {
+imap.on('mail', function (i) {
+    console.log('comming mail of ',i);
     imap.openBox('INBOX', true, handleMail);
 });
 
