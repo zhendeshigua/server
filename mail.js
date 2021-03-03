@@ -56,10 +56,12 @@ async function waitAnswer(ctx){
     return ctx.body = REC_RES;
 }
 
-const handleMail = (err,ind)=>{
+let mailBox;
+
+const handleMail = (err,box)=>{
     if (err) throw err;
-    let festr = '1:3';
-    if(ind==1) festr = '1:1';
+    if(box) mailBox = box;
+    let festr = mailBox.messages.total-2 + ':*';    
     var f = imap.seq.fetch(festr, {
         bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)'
     });
@@ -100,7 +102,7 @@ imap.once('ready', function () {
 
 imap.on('mail', function (i) {
     console.log('comming mail of ',i);
-    handleMail(0,1);
+    handleMail();
 });
 
 imap.once('error', function (err) {
