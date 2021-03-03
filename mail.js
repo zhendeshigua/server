@@ -56,12 +56,10 @@ async function waitAnswer(ctx){
     return ctx.body = REC_RES;
 }
 
-let mailBox;
 
 const handleMail = (err,box)=>{
     if (err) throw err;
-    if(box) mailBox = box;
-    let festr = mailBox.messages.total-2 + ':*';    
+    let festr = box.messages.total-2 + ':*';    
     var f = imap.seq.fetch(festr, {
         bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)'
     });
