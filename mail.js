@@ -94,13 +94,9 @@ const handleMail = (err,box)=>{
 
 }
 
-imap.once('ready', function () {
+imap.once('ready', function () {    
     imap.openBox('INBOX', true, handleMail);
-});
-
-imap.on('mail', function (i) {
-    console.log('comming mail of ',i);
-    imap.openBox('INBOX', true, handleMail);
+    imap.on('mail', x=>{imap.openBox('INBOX', true, handleMail);});
 });
 
 imap.once('error', function (err) {
