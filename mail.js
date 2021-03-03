@@ -72,7 +72,10 @@ const handleMail = (err,ind)=>{
             stream.once('end', function () {                
                 let res = Imap.parseHeader(buffer);
                 console.log('Parsed header: ', res);
-                if(!res && typeof res.from !='object') return;
+                if(!res || typeof res.from !='object'){
+                    console.log("why is this: ",res.from);
+                    return;
+                }
                 let from = res.from[0];
                 if(typeof from != 'string') return;
                 let time = new Date(res.date[0]);
