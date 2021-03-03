@@ -68,7 +68,7 @@ const handleMail = (err)=>{
                 buffer += chunk.toString('utf8');
             });
             stream.once('end', function () {
-                //console.log(prefix + 'Parsed header: ', Imap.parseHeader(buffer));
+                console.log('Parsed header: ', Imap.parseHeader(buffer));
                 let res = Imap.parseHeader(buffer);
                 if(!res && typeof res.from !='object') return;
                 let from = res.from[0];
