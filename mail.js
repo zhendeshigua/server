@@ -5,7 +5,7 @@ const cfg = require("./config");
 const utils = require("./utils");
 const { isString } = require("util");
 const global = require('./global');
-const n = notifier(imap);
+
 // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
     host: "smtp.qq.com",
@@ -28,6 +28,8 @@ var imap = {
     authTimeout:10000
 };
 
+const n = notifier(imap);
+
 var REC_RES=-1;
 
 async function sendMail(ctx) {
@@ -49,7 +51,7 @@ async function sendMail(ctx) {
 async function waitAnswer(ctx){  
     var it = setInterval(() => {
         n.scan(x=>x);        
-    }, 10000);
+    }, 6000);
     
     for(let i=0;i<10000;i++){
         if(REC_RES!=-1){
