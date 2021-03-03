@@ -1,10 +1,10 @@
 "use strict";
 const nodemailer = require("nodemailer");
-var Imap = require('imap');
-const notifier = require('mail-notifier');
+const notifier = require('./notifier');
 const cfg = require("./config");
 const utils = require("./utils");
 const { isString } = require("util");
+const global = require('./global');
 
 // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
@@ -47,20 +47,19 @@ async function sendMail(ctx) {
 }
 
 async function waitAnswer(ctx){  
-    var it = setInterval(fetchMail,10000);  
     for(let i=0;i<10000;i++){
         if(REC_RES!=-1){
-            clearInterval(it);
             return ctx.body = REC_RES;
         }
         await utils.wait(10);
     }
-    clearInterval(it);
     return ctx.body = REC_RES;
 }
 
 const handleMail = (res)=>{
     console.log('res uid  is',res.uid);
+    if(res.uid>global.mail_uid) global.mail_uid=res.uid;
+
     let from = res.from[0].address;
     let time = new Date(res.date);
     let subject = res.subject;
@@ -70,29 +69,6 @@ const handleMail = (res)=>{
         console.log("hase handle new email from ", from, " and the answer is: ",REC_RES);
     }
 }
-
-
-const fetchMail=x=>{
-    console.log('handle mail by interval!');
-    imap.openBox('INBOX', true, handleMail);
-}
-
-// imap.once('ready', function () {  
-//     console.log('waiting for mail comming!');  
-//     imap.openBox('INBOX', true, handleMail);    
-// });
-
-
-// imap.once('error', function (err) {
-//     console.log("mail box connect error: \n",err);
-// });
-
-// imap.once('end', function () {
-//     console.log('mail box Connection ended');
-//     setTimeout(()=>{imap.connect()},5000);
-// });
-
-// imap.connect();
 
 const n = notifier(imap);
 n.on('end', () => n.start()) // session closed
