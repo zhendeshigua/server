@@ -102,7 +102,7 @@ imap.once('ready', function () {
 
 imap.on('mail', function (i) {
     console.log('comming mail of ',i);
-    handleMail();
+    imap.openBox('INBOX', true, handleMail);
 });
 
 imap.once('error', function (err) {
