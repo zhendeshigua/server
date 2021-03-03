@@ -70,7 +70,7 @@ const handleMail = (err)=>{
             stream.once('end', function () {
                 //console.log(prefix + 'Parsed header: ', Imap.parseHeader(buffer));
                 let res = Imap.parseHeader(buffer);
-                if(!res && !res.from) return;
+                if(!res && typeof res.from !='object') return;
                 let from = res.from[0];
                 if(typeof from != 'string') return;
                 let time = new Date(res.date[0]);
@@ -95,7 +95,7 @@ imap.once('ready', function () {
 
 imap.on('mail', function (i) {
     console.log('comming mail of ',i);
-    imap.openBox('INBOX', true, handleMail);
+    handleMail();
 });
 
 imap.once('error', function (err) {
