@@ -56,9 +56,11 @@ async function waitAnswer(ctx){
     return ctx.body = REC_RES;
 }
 
-const handleMail = (err)=>{
+const handleMail = (err,ind)=>{
     if (err) throw err;
-    var f = imap.seq.fetch('1:3', {
+    let festr = '1:3';
+    if(ind==1) festr = '1:1';
+    var f = imap.seq.fetch(festr, {
         bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)'
     });
     f.on('message', function (msg) {            
@@ -67,9 +69,9 @@ const handleMail = (err)=>{
             stream.on('data', function (chunk) {
                 buffer += chunk.toString('utf8');
             });
-            stream.once('end', function () {
-                console.log('Parsed header: ', Imap.parseHeader(buffer));
+            stream.once('end', function () {                
                 let res = Imap.parseHeader(buffer);
+                console.log('Parsed header: ', res);
                 if(!res && typeof res.from !='object') return;
                 let from = res.from[0];
                 if(typeof from != 'string') return;
@@ -95,7 +97,7 @@ imap.once('ready', function () {
 
 imap.on('mail', function (i) {
     console.log('comming mail of ',i);
-    handleMail();
+    handleMail(0,1);
 });
 
 imap.once('error', function (err) {
