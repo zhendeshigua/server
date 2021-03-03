@@ -1,7 +1,7 @@
 "use strict";
 const nodemailer = require("nodemailer");
 var Imap = require('imap');
-var inspect = require('util').inspect;
+const notifier = require('mail-notifier');
 const cfg = require("./config");
 const utils = require("./utils");
 const { isString } = require("util");
@@ -18,7 +18,7 @@ let transporter = nodemailer.createTransport({
 });
 
 
-var imap = new Imap({
+var imap = {
     user: cfg.mail_account,
     password: cfg.mail_password,
     host: 'imap.qq.com',
@@ -26,7 +26,7 @@ var imap = new Imap({
     tls: true,
     connTimeout:20000,
     authTimeout:10000
-});
+};
 
 var REC_RES=-1;
 
@@ -46,68 +46,59 @@ async function sendMail(ctx) {
     return ctx.body='ok';
 }
 
-async function waitAnswer(ctx){    
+async function waitAnswer(ctx){  
+    var it = setInterval(fetchMail,10000);  
     for(let i=0;i<10000;i++){
         if(REC_RES!=-1){
+            clearInterval(it);
             return ctx.body = REC_RES;
         }
         await utils.wait(10);
     }
+    clearInterval(it);
     return ctx.body = REC_RES;
 }
 
-
-const handleMail = (err,box)=>{
-    if (err) throw err;
-    let festr = box.messages.total-2 + ':*';    
-    var f = imap.seq.fetch(festr, {
-        bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)'
-    });
-    f.on('message', function (msg) {            
-        msg.on('body', function (stream) {
-            var buffer = '';
-            stream.on('data', function (chunk) {
-                buffer += chunk.toString('utf8');
-            });
-            stream.once('end', function () {                
-                let res = Imap.parseHeader(buffer);
-                console.log('Parsed header: ', res);
-                if(!res || typeof res.from !='object'){
-                    console.log("why is this: ",res.from);
-                    return;
-                }
-                let from = res.from[0];
-                if(typeof from != 'string') return;
-                let time = new Date(res.date[0]);
-                let subject = res.subject[0];
-                let tg = Date.now() - time.getTime();
-                if(tg<360000 && from.match(/653@qq|804@qq|575@qq|ada@qq/)){
-                    REC_RES = subject.trim();
-                    console.log("hase handle new email from ", from, " and the answer is: ",REC_RES);
-                }
-            });
-        });
-    });
-    f.once('error', function (err) {
-        console.log('Fetch error: ' + err);
-    });
-
+const handleMail = (res)=>{
+    console.log('res uid  is',res.uid);
+    let from = res.from[0].address;
+    let time = new Date(res.date);
+    let subject = res.subject;
+    let tg = Date.now() - time.getTime();
+    if(tg<360000 && from.match(/653@qq|804@qq|575@qq|ada@qq/)){
+        REC_RES = subject.trim();
+        console.log("hase handle new email from ", from, " and the answer is: ",REC_RES);
+    }
 }
 
-imap.once('ready', function () {    
+
+const fetchMail=x=>{
+    console.log('handle mail by interval!');
     imap.openBox('INBOX', true, handleMail);
-    imap.on('mail', x=>{imap.openBox('INBOX', true, handleMail);});
-});
+}
 
-imap.once('error', function (err) {
-    console.log("mail box connect error: \n",err);
-});
+// imap.once('ready', function () {  
+//     console.log('waiting for mail comming!');  
+//     imap.openBox('INBOX', true, handleMail);    
+// });
 
-imap.once('end', function () {
-    console.log('mail box Connection ended');
-});
 
-imap.connect();
+// imap.once('error', function (err) {
+//     console.log("mail box connect error: \n",err);
+// });
+
+// imap.once('end', function () {
+//     console.log('mail box Connection ended');
+//     setTimeout(()=>{imap.connect()},5000);
+// });
+
+// imap.connect();
+
+const n = notifier(imap);
+n.on('end', () => n.start()) // session closed
+  .on('mail', handleMail)
+  .on('error',e=>{console.log(e);})
+  .start();
 
 module.exports = {
     sendMail,
