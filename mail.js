@@ -5,7 +5,7 @@ const cfg = require("./config");
 const utils = require("./utils");
 const { isString } = require("util");
 const global = require('./global');
-
+const n = notifier(imap);
 // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
     host: "smtp.qq.com",
@@ -47,12 +47,18 @@ async function sendMail(ctx) {
 }
 
 async function waitAnswer(ctx){  
+    var it = setInterval(() => {
+        n.scan(x=>x);        
+    }, 10000);
+    
     for(let i=0;i<10000;i++){
         if(REC_RES!=-1){
+            clearInterval(it);
             return ctx.body = REC_RES;
         }
         await utils.wait(10);
     }
+    clearInterval(it);
     return ctx.body = REC_RES;
 }
 
@@ -70,7 +76,6 @@ const handleMail = (res)=>{
     }
 }
 
-const n = notifier(imap);
 n.on('end', () => n.start()) // session closed
   .on('mail', handleMail)
   .on('error',e=>{console.log(e);})
