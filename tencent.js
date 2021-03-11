@@ -62,22 +62,14 @@ const zuobiao = async ctx =>{
     let concat_str='';
     data.TextDetections.map(x=>concat_str=concat_str+x.DetectedText);
     console.log(concat_str); 
-    let res=concat_str.match(/\d+[,:.]\d+/,',')
+    let res=concat_str.match(/\d+[，,.:\s]+\d+/)
     if(res) res = ''+res;
     else return ctx.body = "-1,-1";
-
-    if(res.indexOf(',')!=-1){
-        return ctx.body = res;
-    }else if(res.indexOf('.')!=-1){
-        res=res.replace('.',',');
-        return ctx.body = res;
-    }else if(res.indexOf(':')!=-1){
-        res=res.replace(':',',');
-        return ctx.body = res;
-    }else{
-        return ctx.body = "-1,-1";
-    }
-
+    res = res.replace(' ','');
+    res = res.replace(':',',');
+    res = res.replace('.',',');
+    res = res.replace('，',','); 
+    return ctx.body = res;
 }
 
 const wzwz = async ctx =>{

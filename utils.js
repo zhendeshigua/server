@@ -63,13 +63,15 @@ const recognize = (concat_str, guess)=>{
     }
 
     console.log('Rec string: ',concat_str);
-    let pt = /\d+[,.:]\d+/ig
+    let pt = /\d+[，,.:\s]+\d+/ig
     let axis = concat_str.match(pt);
     
     if(axis){
         axis = ''+axis;
+        axis = axis.replace(' ','');
         axis = axis.replace(':',',');
         axis = axis.replace('.',',');
+        axis = axis.replace('，',',');        
     }else{
         let ifcase = concat_str.match(/\d{6}/);
         if(ifcase){

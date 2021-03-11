@@ -194,29 +194,22 @@ let zuobiao = async ctx => {
     //     return ctx.body='-1,-1';
     // }
     console.log('res gonna to be RecExg is: ',res);
-    res=res.match(/\d+[,:.]\d+/,',')
+    res=res.match(/\d+[，,.:\s]+\d+/)
     if(res) res = ''+res;
     else {
         resp = await async_post('general',base64str);
         res = parseRecString(resp.words_result);
-        res=res.match(/\d+[,:.]\d+/,',');
+        res=res.match(/\d+[，,.:\s]+\d+/);
         console.log('second rec of resp is: ',resp,' recExg res is: ',res);
         if(res) res= ''+res;
         else return ctx.body = "-1,-1";
-    }
-    
+    }    
     console.log('after RecExg res is: ',res);
-    if(res.indexOf(',')!=-1){
-        return ctx.body = res;
-    }else if(res.indexOf('.')!=-1){
-        res=res.replace('.',',');
-        return ctx.body = res;
-    }else if(res.indexOf(':')!=-1){
-        res=res.replace(':',',');
-        return ctx.body = res;
-    }else{
-        return ctx.body = "-1,-1";
-    }
+    res = res.replace(' ','');
+    res = res.replace(':',',');
+    res = res.replace('.',',');
+    res = res.replace('，',','); 
+    return ctx.body = res;
 }
 
 let parseData = (data, str)=>{
