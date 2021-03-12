@@ -46,6 +46,7 @@ const zhuoguiDict = ()=>{
     return guess;
 }
 
+
 /**
  * 
  * @param {String} concat_str string gona to be recgnize.
@@ -55,11 +56,20 @@ const zhuoguiDict = ()=>{
 const recognize = (concat_str, guess)=>{
     let where='_'
     for(let e in guess){
-        let k = guess[e].filter(x=>concat_str.includes(x));
-        if(k.length>0){
-            where=e;
-            break;
-        }
+        guess[e].map(x=>{
+            let all=x.match(/./ig);
+            if(all.every(j=>concat_str.includes(j))){
+                where=e;
+            }
+        })
+        if(where!='_') break;
+
+        // let k = guess[e].filter(x=>concat_str.includes(x));
+
+        // if(k.length>0){
+        //     where=e;
+        //     break;
+        // }
     }
 
     console.log('Rec string: ',concat_str);
