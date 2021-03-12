@@ -1,4 +1,2 @@
 node index.js
 pause
-
-ssr://NDUuOC4xNTguMjM6OTE2ODpvcmlnaW46cmM0OnBsYWluOmJHNWpiaTV2Y21jZ2FEZy8_b2Jmc3BhcmFtPSZyZW1hcmtzPTVMLUU1NzJYNXBhdlNBJmdyb3VwPVRHNWpiaTV2Y21j
