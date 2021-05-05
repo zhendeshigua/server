@@ -40,7 +40,11 @@ const zhuoguiDict = ()=>{
         guess[wheres[i]] = maybes[i]; 
     } 
     for(var k in cfg.zhuogui_place_add){
-        guess[k]=cfg.zhuogui_place_add[k];
+        if(guess[k]){
+            guess[k]=guess[k].concat(cfg.zhuogui_place_add[k]);
+        }else{
+            guess[k]=cfg.zhuogui_place_add[k];
+        }        
     } 
     // console.log(guess); 
     return guess;

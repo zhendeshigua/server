@@ -29,7 +29,7 @@ const zhuogui = async ctx=>{
     }
     let guess = utils.zhuoguiDict();
     let result_list=[];
-    let base64str = utils.img2base64('C:/'+qs+'.jpg');
+    let base64str = utils.img2base64('C:/'+qs+'.bmp');
     let req ={
         ImageBase64: base64str
     }

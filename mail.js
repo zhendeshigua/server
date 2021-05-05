@@ -65,7 +65,7 @@ async function waitAnswer(ctx){
 }
 
 const handleMail = (res)=>{
-    console.log('res uid  is',res.uid);
+    // console.log('res uid  is',res.uid);
     if(res.uid>global.mail_uid) global.mail_uid=res.uid;
 
     let from = res.from[0].address;
